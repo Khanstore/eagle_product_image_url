@@ -13,16 +13,17 @@ class ProductTemplate(models.Model):
         copy=False,
     )
     
-    @api.model
-    def create(self, vals):
-        if not vals.get('image_1920'):
-            image_url_template = vals.get('image_url_template')
-            if image_url_template:
-                try:
-                    image = base64.encodebytes(urllib.request.urlopen(image_url_template).read())
-                    vals['image_1920'] = image
-                except:
-                    pass
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('image_1920'):
+                image_url_template = vals.get('image_url_template')
+                if image_url_template:
+                    try:
+                        image = base64.encodebytes(urllib.request.urlopen(image_url_template).read())
+                        vals['image_1920'] = image
+                    except:
+                        pass
         return super(ProductTemplate, self).create(vals)
             
 
